@@ -109,8 +109,20 @@ func StartCommandExecutor(
 		cmd.Env = append(cmd.Env, langEnvVariable)
 	}
 
+	skip_value, skipping_root := os.LookupEnv("SSM_SKIP_ROOT")
+	if skipping_root {
+		if skip_value == "" {
+			skipping_root = false
+		} else {
+			skipping_root, err = strconv.ParseBool(skip_value)
+			if err != nil {
+				return
+			}
+		}
+	}
+
 	var sessionUser string
-	if !constants.GetRunAsElevated(shellProps) && !isSessionLogger && !appConfig.Agent.ContainerMode {
+	if !skipping_root && !constants.GetRunAsElevated(shellProps) && !isSessionLogger && !appConfig.Agent.ContainerMode {
 		// We get here only when its a customer shell that needs to be started in a specific user mode.
 
 		u := &utility.SessionUtil{}

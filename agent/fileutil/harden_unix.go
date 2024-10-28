@@ -18,6 +18,7 @@ package fileutil
 
 import (
 	"os"
+	"strconv"
 	"syscall"
 )
 
@@ -27,13 +28,18 @@ const (
 	permissionMask os.FileMode = 0777
 )
 
-func Harden(path string) (err error) {
-	return
-}
-
 // Harden the provided path with non-inheriting ACL for admin access only.
-func HardenX(path string) (err error) {
+func Harden(path string) (err error) {
 	var fi os.FileInfo
+
+	skip_value, exists := os.LookupEnv("SSM_SKIP_ROOT")
+	if exists {
+		var skip_bool bool
+		skip_bool, err = strconv.ParseBool(skip_value)
+		if err != nil || skip_bool {
+			return
+		}
+	}
 
 	if fi, err = os.Stat(path); err != nil {
 		return
