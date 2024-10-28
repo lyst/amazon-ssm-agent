@@ -19,12 +19,23 @@ package logger
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/aws/amazon-ssm-agent/agent/appconfig"
 )
 
+func getSSMLogDir() string {
+	value, exists := os.LookupEnv("SSM_PATH")
+	if exists {
+		return filepath.Join(value, "ssm-log")
+	}
+	return "/var/log/amazon/ssm"
+}
+
 var (
-	DefaultLogDir = "/var/log/amazon/ssm"
+	// DefaultLogDir = "/var/log/amazon/ssm"
+	DefaultLogDir = getSSMLogDir()
 )
 
 // DefaultSeelogConfigFilePath specifies the default seelog location

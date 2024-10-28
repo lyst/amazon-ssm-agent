@@ -26,10 +26,27 @@ import (
 	"github.com/aws/amazon-ssm-agent/agent/network/certreader"
 )
 
+func getSSMDataDir() string {
+	value, exists := os.LookupEnv("SSM_PATH")
+	if exists {
+		return filepath.Join(value, "ssm-data") + string(os.PathSeparator)
+	}
+	return "/var/lib/amazon/ssm/"
+}
+
+func getSSMBinDir() string {
+	value, exists := os.LookupEnv("SSM_PATH")
+	if exists {
+		return filepath.Join(value) + string(os.PathSeparator)
+	}
+	return "/usr/bin/"
+}
+
 var (
 
 	// AgentExtensions specified the root folder for various kinds of downloaded content
-	AgentData = "/var/lib/amazon/ssm/"
+	// AgentData = "/var/lib/amazon/ssm/"
+	AgentData = getSSMDataDir()
 
 	// PackageRoot specifies the directory under which packages will be downloaded and installed
 	PackageRoot = AgentData + "packages"
@@ -118,7 +135,8 @@ var PowerShellPluginCommandName string
 // DefaultProgramFolder is the default folder for SSM
 var DefaultProgramFolder = "/etc/amazon/ssm/"
 
-var defaultWorkerPath = "/usr/bin/"
+// var defaultWorkerPath = "/usr/bin/"
+var defaultWorkerPath = getSSMBinDir()
 var DefaultSSMAgentBinaryPath = defaultWorkerPath + "amazon-ssm-agent"
 var DefaultSSMAgentWorker = defaultWorkerPath + "ssm-agent-worker"
 var DefaultDocumentWorker = defaultWorkerPath + "ssm-document-worker"

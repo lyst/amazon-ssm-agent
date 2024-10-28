@@ -27,9 +27,12 @@ const (
 	permissionMask os.FileMode = 0777
 )
 
-// Harden the provided path with non-inheriting ACL for admin access only.
 func Harden(path string) (err error) {
+	return
+}
 
+// Harden the provided path with non-inheriting ACL for admin access only.
+func HardenX(path string) (err error) {
 	var fi os.FileInfo
 
 	if fi, err = os.Stat(path); err != nil {
