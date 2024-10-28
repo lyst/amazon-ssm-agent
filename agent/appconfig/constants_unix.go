@@ -26,6 +26,14 @@ import (
 	"github.com/aws/amazon-ssm-agent/agent/network/certreader"
 )
 
+func getSSMConfigDir() string {
+	value, exists := os.LookupEnv("SSM_PATH")
+	if exists {
+		return filepath.Join(value) + string(os.PathSeparator)
+	}
+	return "/etc/amazon/ssm/"
+}
+
 func getSSMDataDir() string {
 	value, exists := os.LookupEnv("SSM_PATH")
 	if exists {
@@ -133,7 +141,8 @@ var (
 var PowerShellPluginCommandName string
 
 // DefaultProgramFolder is the default folder for SSM
-var DefaultProgramFolder = "/etc/amazon/ssm/"
+// var DefaultProgramFolder = "/etc/amazon/ssm/"
+var DefaultProgramFolder = getSSMConfigDir()
 
 // var defaultWorkerPath = "/usr/bin/"
 var defaultWorkerPath = getSSMBinDir()
