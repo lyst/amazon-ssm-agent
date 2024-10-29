@@ -74,10 +74,15 @@ func StartCommandExecutor(
 
 	appConfig := plugin.context.AppConfig()
 
-	if strings.TrimSpace(constants.GetShellCommand(shellProps)) == "" || isSessionLogger {
-
+	if isSessionLogger {
 		cmd = exec.Command("sh")
-
+	} else if strings.TrimSpace(constants.GetShellCommand(shellProps)) == "" {
+		shell_binary := "bash"
+		_, err := exec.LookPath(shell_binary)
+		if err != nil {
+			shell_binary = "sh"
+		}
+		cmd = exec.Command(shell_binary)
 	} else {
 		if appConfig.Agent.ContainerMode || appconfig.PluginNameNonInteractiveCommands == plugin.name {
 
